@@ -11,7 +11,7 @@ class RPS40ST:
         self.b = b
     
     def get_resistance(self):
-        voltage = 3.6 * self.adc.read() / 4095
+        voltage = 3.6 * self.adc.read() / 65535
         if voltage <= 0.05:
             return float('inf')
         return self.vcc * self.r_ext / voltage - self.r_ext

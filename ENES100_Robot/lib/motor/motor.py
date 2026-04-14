@@ -1,14 +1,13 @@
 from machine import Pin, PWM
-from enum import Enum
 
-class Direction(Enum):
+class Direction:
     CW = 1
     CCW = 2
 
 
 class Motor:
     
-    def __init__(self, pinINA:Pin, pinINB:Pin, pinPWM:Pin = None, minDuty:int=46000, maxDuty:int=65535):
+    def __init__(self, pinINA:Pin, pinINB:Pin, pinPWM:Pin = None, minDuty:int=750, maxDuty:int=1023):
         self.pin_a = pinINA
         self.pin_b = pinINB
         
@@ -23,7 +22,7 @@ class Motor:
         self.separate_pwm = pinPWM is not None
     
     def __update(self):
-        if self.seperate_pwm:
+        if self.separate_pwm:
             self.pwm_ext.duty(self.duty)
             if (self.direction == Direction.CW):
                 self.pin_a.value(1)
@@ -47,7 +46,7 @@ class Motor:
         self.__update()
         
     def brake(self):
-        if self.seperate_pwm:
+        if self.separate_pwm:
             self.pin_a.value(1)
             self.pin_b.value(1)
         else:
@@ -61,7 +60,3 @@ class Motor:
         else:
             self.pwm_a.duty(0)
             self.pwm_b.duty(0)
-        
-            
-
-

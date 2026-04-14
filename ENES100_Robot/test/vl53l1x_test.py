@@ -1,5 +1,5 @@
 from machine import I2C, Pin
-from vl53l1x.vl53l1x import VL53L1X
+from vl53l1x import VL53L1X
 import time
 
 i2c = I2C(0, scl=Pin(22), sda=Pin(21))

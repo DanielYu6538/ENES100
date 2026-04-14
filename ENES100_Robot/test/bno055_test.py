@@ -1,6 +1,6 @@
 import machine
 import time
-from bno055.bno055 import BNO055
+from bno055 import BNO055
 
 # 1. Initialize I2C (Adjust pins if your Acebott board uses different ones)
 # Typical ESP32: scl=22, sda=21

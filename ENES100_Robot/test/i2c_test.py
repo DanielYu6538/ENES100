@@ -1,7 +1,7 @@
 import machine
 import time
-from vl53l1x.vl53l1x import VL53L1X # Adjust based on your final file structure
-from bno055.bno055 import BNO055   # Adjust based on your final file structure
+from vl53l1x import VL53L1X # Adjust based on your final file structure
+from bno055 import BNO055   # Adjust based on your final file structure
 
 # 1. Initialize the I2C bus once
 i2c = machine.I2C(0, scl=machine.Pin(22), sda=machine.Pin(21))
