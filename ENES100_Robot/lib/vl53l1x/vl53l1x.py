@@ -126,38 +126,35 @@ class VL53L1X:
         self.writeReg(0x0000, 0x01)
     def read(self):
         data = self.i2c.readfrom_mem(self.address, 0x0089, 17, addrsize=16) # RESULT__RANGE_STATUS
+        
         range_status = data[0]
-        # report_status = data[1]
-        stream_count = data[2]
-        dss_actual_effective_spads_sd0 = (data[3]<<8) + data[4]
-        # peak_signal_count_rate_mcps_sd0 = (data[5]<<8) + data[6]
-        ambient_count_rate_mcps_sd0 = (data[7]<<8) + data[8]
-        # sigma_sd0 = (data[9]<<8) + data[10]
-        # phase_sd0 = (data[11]<<8) + data[12]
-        final_crosstalk_corrected_range_mm_sd0 = (data[13]<<8) + data[14]
-        peak_signal_count_rate_crosstalk_corrected_mcps_sd0 = (data[15]<<8) + data[16]
-        #status = None
-        #if range_status in (17, 2, 1, 3):
-            #status = "HardwareFail"
-        #elif range_status == 13:
-            #status = "MinRangeFail"
-        #elif range_status == 18:
-            #status = "SynchronizationInt"
-        #elif range_status == 5:
-            #status = "OutOfBoundsFail"
-        #elif range_status == 4:
-            #status = "SignalFail"
-        #elif range_status == 6:
-            #status = "SignalFail"
-        #elif range_status == 7:
-            #status = "WrapTargetFail"
-        #elif range_status == 12:
-            #status = "XtalkSignalFail"
-        #elif range_status == 8:
-            #status = "RangeValidMinRangeClipped"
-        #elif range_status == 9:
-            #if stream_count == 0:
-                #status = "RangeValidNoWrapCheckFail"
-            #else:
-                #status = "OK"
-        return final_crosstalk_corrected_range_mm_sd0
+        distance_mm = (data[13] << 8) + data[14]
+        
+        is_valid = (range_status == 0)
+        
+        return distance_mm, range_status, is_valid
+    
+    def obj_ahead(self, distance:int):
+        dist, status, valid = self.read()
+        return (dist < distance and valid);
+    
+    def set_distance_mode(self, mode):
+        if mode == 1: # Short distance
+            self.writeReg(0x006B, 0x07)
+            self.writeReg(0x006C, 0x05)
+            self.writeReg16Bit(0x006E, 0x0509)
+            self.writeReg16Bit(0x0072, 0x0305)
+        elif mode == 2: # Long distance
+            self.writeReg(0x006B, 0x03) 
+            self.writeReg(0x006C, 0x01)
+            self.writeReg16Bit(0x006E, 0x0F0B)
+            self.writeReg16Bit(0x0072, 0x0D09)
+        
+    def get_distance_mode(self):
+        period = self.readReg16Bit(0x006E)
+        
+        if (period == 0x0705):
+            return 1 # short distance
+        elif (period == 0x0F0B):
+            return 2 # long distance
+        return None

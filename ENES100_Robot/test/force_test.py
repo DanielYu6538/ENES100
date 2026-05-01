@@ -5,5 +5,5 @@ import time
 force = RPS40ST(Pin(32))
 
 while (True):
-    print(force.get_resistance())
+    print(force.get_voltage())
     time.sleep_ms(500)

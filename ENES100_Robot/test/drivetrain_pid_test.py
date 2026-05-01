@@ -1,10 +1,9 @@
+from drivetrain import Drivetrain
 from machine import Pin, I2C
 from motor import Motor
-from drive import Drive, Direction
 from bno055 import BNO055
 import time
 
-from drivetrain import Drivetrain
 
 i2c = I2C(0, scl=Pin(22), sda=Pin(21))
 
@@ -15,6 +14,8 @@ except Exception as e:
     print("Failed to find BNO055. Check wiring:", e)
     raise SystemExit
 
+# 1. Setup Pins for Motors (Adjust pin numbers based on your ENES100 wiring)
+# Left Motor Pins
 left_in1 = Pin(5, Pin.OUT)
 left_in2 = Pin(16, Pin.OUT)
 left_pwm = Pin(17) # Set to None if using 2-pin PWM mode
@@ -29,34 +30,8 @@ right_pwm = Pin(23) # Set to None if using 2-pin PWM mode
 l_motor = Motor(left_in1, left_in2, left_pwm)
 r_motor = Motor(right_in1, right_in2, right_pwm)
 
-# 3. Initialize Drivetrain
-d = Drive(l_motor, r_motor)
+drive = Drivetrain(l_motor, r_motor, imu);
 
-drivetrain = Drivetrain(l_motor, r_motor, imu)
+time.sleep(3)
 
-def turn():
-    heading, roll, pitch = imu.euler()
-    initial_heading = heading;
-    
-    d.move(Direction.RIGHT, 50);
-    
-    while (not(heading > initial_heading + 80 and heading < initial_heading + 95)):
-        heading, roll, pitch = imu.euler();
-        print("Heading: {:6.2f} | Roll: {:6.2f} | Pitch: {:6.2f}".format(heading, roll, pitch))        
-        time.sleep_ms(1)
-#     time.sleep_ms(1500)
-    
-    d.stop();
-
-# turn()
-# 
-# time.sleep(2)
-# 
-# turn()
-                            # 
-# time.sleep(2)
-# 
-# turn()
-
-
-drivetrain.turn(90, 50)
+drive.drive(50, 30)

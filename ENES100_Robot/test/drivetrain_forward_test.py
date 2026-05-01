@@ -1,7 +1,18 @@
-from machine import Pin
+from machine import Pin, I2C
+from bno055 import BNO055
 from motor import Motor
-from drivetrain import Drivetrain, Direction
+from drive import Drive, Direction
 import time
+
+
+i2c = I2C(0, scl=Pin(22), sda=Pin(21))
+
+try:
+    imu = BNO055(i2c)
+    print("BNO055 connected successfully!")
+except Exception as e:
+    print("Failed to find BNO055. Check wiring:", e)
+    raise SystemExit
 
 # 1. Setup Pins for Motors (Adjust pin numbers based on your ENES100 wiring)
 # Left Motor Pins
@@ -20,8 +31,14 @@ l_motor = Motor(left_in1, left_in2, left_pwm)
 r_motor = Motor(right_in1, right_in2, right_pwm)
 
 # 3. Initialize Drivetrain
-drive = Drivetrain(l_motor, r_motor)
+d = Drive(l_motor, r_motor)
 
-drive.move(Direction.FORWARD, 100)
+d.move(Direction.FORWARD, 100)
+
+while True:
+    heading, roll, pitch = imu.euler();
+    print("Heading: {:6.2f} | Roll: {:6.2f} | Pitch: {:6.2f}".format(heading, roll, pitch))
+    time.sleep_ms(200)
+    
 time.sleep(24)
-drive.stop()
+d.stop()

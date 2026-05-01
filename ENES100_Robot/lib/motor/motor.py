@@ -7,7 +7,7 @@ class Direction:
 
 class Motor:
     
-    def __init__(self, pinINA:Pin, pinINB:Pin, pinPWM:Pin = None, minDuty:int=750, maxDuty:int=1023):
+    def __init__(self, pinINA:Pin, pinINB:Pin, pinPWM:Pin = None, minDuty:int=200, maxDuty:int=1023):
         self.pin_a = pinINA
         self.pin_b = pinINB
         
@@ -39,8 +39,12 @@ class Motor:
                 self.pwm_b.duty(self.duty)
     
     def move(self, direction:Direction = None, speed:int = None):
-        if (speed is not None and speed >= 0 and speed <= 100):
-            self.duty = int(self.minDuty + (speed / 100) * (self.maxDuty - self.minDuty))
+        if (speed is not None):
+            if (speed > 0 and speed <= 100):
+                self.duty = int(self.minDuty + (speed / 100) * (self.maxDuty - self.minDuty))
+            elif (speed == 0):
+                self.stop()
+                return
         if (direction is not None):
             self.direction = direction
         self.__update()
