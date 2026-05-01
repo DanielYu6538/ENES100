@@ -1,0 +1,4 @@
+add_library(usermod_drivetrain INTERFACE)
+target_sources(usermod_drivetrain INTERFACE ${CMAKE_CURRENT_LIST_DIR}/drivetrain.c)
+target_include_directories(usermod_drivetrain INTERFACE ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(usermod INTERFACE usermod_drivetrain)
