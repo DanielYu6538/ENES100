@@ -14,7 +14,7 @@ print("Sensors initialized!")
 
 while True:
     # Read from Distance Sensor
-    mm = distance_sensor.read()
+    mm, status = distance_sensor.read()
     
     # Read from IMU
     heading, roll, pitch = imu_sensor.euler()

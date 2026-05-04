@@ -130,31 +130,42 @@ class VL53L1X:
         range_status = data[0]
         distance_mm = (data[13] << 8) + data[14]
         
-        is_valid = (range_status == 0)
+        is_valid = (range_status == 9)
         
         return distance_mm, range_status, is_valid
     
-    def obj_ahead(self, distance:int):
-        dist, status, valid = self.read()
-        return (dist < distance and valid);
-    
     def set_distance_mode(self, mode):
         if mode == 1: # Short distance
-            self.writeReg(0x006B, 0x07)
-            self.writeReg(0x006C, 0x05)
-            self.writeReg16Bit(0x006E, 0x0509)
-            self.writeReg16Bit(0x0072, 0x0305)
+            self.writeReg(0x0060, 0x07) # RANGE_CONFIG__VCSEL_PERIOD_A
+            self.writeReg(0x0063, 0x05) # RANGE_CONFIG__VCSEL_PERIOD_B
+            self.writeReg(0x0069, 0x38) # RANGE_CONFIG__VALID_PHASE_HIGH
+            self.writeReg(0x0078, 0x07) # SD_CONFIG__WOI_SD0
+            self.writeReg(0x0079, 0x05) # SD_CONFIG__WOI_SD1
+            self.writeReg(0x007A, 0x06) # SD_CONFIG__INITIAL_PHASE_SD0
+            self.writeReg(0x007B, 0x06) # SD_CONFIG__INITIAL_PHASE_SD1
         elif mode == 2: # Long distance
-            self.writeReg(0x006B, 0x03) 
-            self.writeReg(0x006C, 0x01)
-            self.writeReg16Bit(0x006E, 0x0F0B)
-            self.writeReg16Bit(0x0072, 0x0D09)
+            self.writeReg(0x0060, 0x0F) # RANGE_CONFIG__VCSEL_PERIOD_A
+            self.writeReg(0x0063, 0x0D) # RANGE_CONFIG__VCSEL_PERIOD_B
+            self.writeReg(0x0069, 0xB8) # RANGE_CONFIG__VALID_PHASE_HIGH
+            self.writeReg(0x0078, 0x0F) # SD_CONFIG__WOI_SD0
+            self.writeReg(0x0079, 0x0D) # SD_CONFIG__WOI_SD1
+            self.writeReg(0x007A, 0x0A) # SD_CONFIG__INITIAL_PHASE_SD0
+            self.writeReg(0x007B, 0x0A) # SD_CONFIG__INITIAL_PHASE_SD1
         
     def get_distance_mode(self):
-        period = self.readReg16Bit(0x006E)
-        
-        if (period == 0x0705):
-            return 1 # short distance
-        elif (period == 0x0F0B):
-            return 2 # long distance
+        val = self.readReg(0x0060)
+        if val == 0x07: return 1
+        if val == 0x0F: return 2
         return None
+    
+    def get_status_message(self, status):
+        """Converts raw status byte to human readable string."""
+        messages = {
+            9: "Range Valid",
+            6: "Sigma Fail",
+            4: "Signal Fail",
+            5: "Out of Bounds Fail",
+            7: "Wrap Target Fail",
+            13: "Min Range Fail"
+        }
+        return messages.get(status, "Unknown Status")

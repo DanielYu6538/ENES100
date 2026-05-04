@@ -30,7 +30,9 @@ right_pwm = Pin(23) # Set to None if using 2-pin PWM mode
 l_motor = Motor(left_in1, left_in2, left_pwm)
 r_motor = Motor(right_in1, right_in2, right_pwm)
 
-drive = Drivetrain(l_motor, r_motor, imu);
+print(imu.euler())
+
+drive = Drivetrain(l_motor, r_motor, imu, 1.5, 0.01, 0.5);
 
 time.sleep(3)
 

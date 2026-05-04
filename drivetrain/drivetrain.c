@@ -7,19 +7,22 @@
 typedef struct _mp_obj_drivetrain_t {
     mp_obj_base_t base;
     
-    // References to your Python objects
+    // References to Python objects
     mp_obj_t motor_left;
     mp_obj_t motor_right;
     mp_obj_t imu;
 
-    // We can also store PID variables here later
+    // PID variables
     mp_float_t kp;
-    mp_float_t target_heading;
+    mp_float_t ki;
+    mp_float_t kd;
+
+    // mp_float_t target_heading;
 } mp_obj_drivetrain_t;
 
 static mp_obj_t drivetrain_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     // We expect 3 arguments: left motor, right motor, and IMU
-    mp_arg_check_num(n_args, n_kw, 3, 4, false);
+    mp_arg_check_num(n_args, n_kw, 3, 6, false);
 
     // Allocate the Drivetrain object on the heap
     mp_obj_drivetrain_t *self = mp_obj_malloc(mp_obj_drivetrain_t, type);
@@ -34,12 +37,11 @@ static mp_obj_t drivetrain_make_new(const mp_obj_type_t *type, size_t n_args, si
     self->imu = args[2];
 
     // Initialize some default PID values
-    if (n_args == 4) {
-        self->kp = mp_obj_get_float(args[3]);
-    } else {
-        self->kp = 1.5f;
-    }
-    self->target_heading = 0.0f;
+    self->kp = (n_args >= 4) ? mp_obj_get_float(args[3]) : 1.5f;
+    self->ki = (n_args >= 5) ? mp_obj_get_float(args[4]) : 0.0f;
+    self->kd = (n_args == 6) ? mp_obj_get_float(args[5]) : 0.0f;
+
+    // self->target_heading = 0.0f;
 
     return MP_OBJ_FROM_PTR(self);
 }
@@ -116,23 +118,37 @@ static mp_obj_t drivetrain_drive(mp_obj_t self_in, mp_obj_t speed_obj, mp_obj_t 
     uint32_t start = mp_hal_ticks_ms();
     mp_float_t target_heading = get_current_heading(self->imu); 
 
+    mp_float_t last_error = 0.0f;
+    mp_float_t integral = 0.0f;
+    const mp_float_t dt = 0.01f; // delay in loop
+
     while (mp_hal_ticks_ms() - start < duration_ms) {
         mp_float_t current = get_current_heading(self->imu); 
 
+        // Calculate error
         mp_float_t error = target_heading - current;
         while (error > MICROPY_FLOAT_CONST(180.0)) error -= MICROPY_FLOAT_CONST(360.0);
         while (error < MICROPY_FLOAT_CONST(-180.0)) error += MICROPY_FLOAT_CONST(360.0);
 
-        mp_float_t correction = error * self->kp;
+        // Integral
+        integral += integral * dt;
+        if (integral > 100.0f) integral = 100.0f;
+        if (integral < -100.0f) integral = -100.0f;
 
-        // 4. Calculate final motor speeds (bounded 0-100)
+        // Derivative
+        mp_float_t derivative = (error - last_error) / dt;
+        last_error = error;
+
+        // Correction Proportional + Integral + Derivative
+        mp_float_t correction = error * self->kp + integral * self->ki + derivative * self->kd;
+
         int left_v = base_speed + (int) correction;
         int right_v = -(base_speed - (int) correction);
 
         set_motor(self->motor_left, left_v);
         set_motor(self->motor_right, right_v);
 
-        mp_hal_delay_ms(10); // Run at 100Hz ⚡
+        mp_hal_delay_ms(10); 
     }
 
     set_motor(self->motor_left, 0);

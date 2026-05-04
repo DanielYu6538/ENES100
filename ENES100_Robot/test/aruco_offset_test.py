@@ -28,8 +28,6 @@ robot = Drivetrain(l_motor, r_motor, imu);
 # Enes100 lib
 Enes100.begin("Material Madness", "MATERIAL", 10, 1120) # Update values
 
-MOTOR_POWER = 50
-TIME = 10
 
 def get_position():
     xPos, yPos, thetaPos = -1, -1, -1
@@ -44,28 +42,19 @@ def get_position():
         time.sleep_ms(10)
     return xPos, yPos, thetaPos
 
+
 initial_x, initial_y, initial_theta = get_position()
 
-robot.drive(MOTOR_POWER, TIME)
-
-time.sleep_ms(500)
+robot.turn(180)
 
 final_x, final_y, final_theta = get_position()
 
+print("Initial position: ", initial_x, initial_y, initial_theta)
+print("Final position: ", final_x, final_y, final_theta)
+
 delta_x = final_x - initial_x
 delta_y = final_y - initial_y
-distance = math.sqrt(delta_x**2 + delta_y**2)
 
-velocity = distance/TIME
+offset = math.sqrt(delta_x**2 + delta_y**2) /2
 
-print("Initial X: %f", initial_x)
-print("Initial Y: %f", initial_y)
-
-print("Final X: %f", final_x)
-print("Final Y: %f", final_y)
-
-print("Velocity: %f", velocity)
-
-
-
-
+print("Offset: ", offset)
