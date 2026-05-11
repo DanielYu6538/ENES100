@@ -1,6 +1,6 @@
 from drivetrain import Drivetrain
 from machine import Pin, I2C
-from motor import Motor
+from motor import Motor, Direction
 from bno055 import BNO055
 import time
 
@@ -26,13 +26,13 @@ right_in2 = Pin(19, Pin.OUT)
 right_pwm = Pin(23) # Set to None if using 2-pin PWM mode
 
 # 2. Initialize Motor Objects
-# The minDuty and maxDuty are set based on your class defaults (46000 to 65535)
 l_motor = Motor(left_in1, left_in2, left_pwm)
 r_motor = Motor(right_in1, right_in2, right_pwm)
 
+
 print(imu.euler())
 
-drive = Drivetrain(l_motor, r_motor, imu, 1.5, 0.01, 0.5);
+drive = Drivetrain(l_motor, r_motor, imu, 2, 0.01, 0.5);
 
 time.sleep(3)
 

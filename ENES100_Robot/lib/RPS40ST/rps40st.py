@@ -1,7 +1,6 @@
 from machine import Pin, ADC
 import time
 
-
 class RPS40ST:
     def __init__(self, pin:Pin, vcc=3.3, r_ext=10000, a=35000000, b=-1.4):
         self.adc = ADC(pin, atten=ADC.ATTN_11DB)

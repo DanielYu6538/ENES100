@@ -11,9 +11,10 @@ import math
 import time
 # SETUP:
 #I2C Sensors
-i2c = I2C(0, scl=Pin(22), sda=Pin(21))
+i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=9600)
 distance_sensor = VL53L1X(i2c)
 imu = BNO055(i2c)
+print("i2c sensors init")
 
 # Force sensor
 force = RPS40ST(Pin(34))
@@ -33,7 +34,7 @@ r_motor = Motor(right_in1, right_in2, right_pwm)
 robot = Drivetrain(l_motor, r_motor, imu);
 
 # Enes100 lib
-Enes100.begin("Material Madness", "MATERIAL", 10, 1120) # Update values
+Enes100.begin("Material Madness", "MATERIAL", 10, 1116) # Update values
 
 # Constants
 PI = 3.14159265358979323
@@ -118,7 +119,7 @@ robot.drive(MOTOR_POWER, 0.85/VELOCITY) # Move right before mission
 
 
 # Mission
-Enes.print("Start mission tasks")
+Enes100.print("Start mission tasks")
 
 # Navigation to End
 Enes100.print("Start navigation to end")

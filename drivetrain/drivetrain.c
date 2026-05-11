@@ -26,20 +26,15 @@ static mp_obj_t drivetrain_make_new(const mp_obj_type_t *type, size_t n_args, si
 
     // Allocate the Drivetrain object on the heap
     mp_obj_drivetrain_t *self = mp_obj_malloc(mp_obj_drivetrain_t, type);
-
-    // Store the Python objects directly into our structgem
-    // args[0] = Motor object 1
-    // args[1] = Motor object 2
-    // args[2] = BNO055 object
-    // args[3] = kp val
+    // Store motor and IMU
     self->motor_left = args[0];
     self->motor_right = args[1];
     self->imu = args[2];
 
     // Initialize some default PID values
-    self->kp = (n_args >= 4) ? mp_obj_get_float(args[3]) : 1.5f;
-    self->ki = (n_args >= 5) ? mp_obj_get_float(args[4]) : 0.0f;
-    self->kd = (n_args == 6) ? mp_obj_get_float(args[5]) : 0.0f;
+    self->kp = (n_args >= 4) ? mp_obj_get_float(args[3]) : MICROPY_FLOAT_CONST(1.5);
+    self->ki = (n_args >= 5) ? mp_obj_get_float(args[4]) : MICROPY_FLOAT_CONST(0.0);
+    self->kd = (n_args == 6) ? mp_obj_get_float(args[5]) : MICROPY_FLOAT_CONST(0.0);
 
     // self->target_heading = 0.0f;
 
@@ -131,9 +126,9 @@ static mp_obj_t drivetrain_drive(mp_obj_t self_in, mp_obj_t speed_obj, mp_obj_t 
         while (error < MICROPY_FLOAT_CONST(-180.0)) error += MICROPY_FLOAT_CONST(360.0);
 
         // Integral
-        integral += integral * dt;
-        if (integral > 100.0f) integral = 100.0f;
-        if (integral < -100.0f) integral = -100.0f;
+        integral += error * dt;
+        if (integral > MICROPY_FLOAT_CONST(50.0)) integral = MICROPY_FLOAT_CONST(50.0);
+        if (integral < MICROPY_FLOAT_CONST(-50.0)) integral = MICROPY_FLOAT_CONST(-50.0);
 
         // Derivative
         mp_float_t derivative = (error - last_error) / dt;
