@@ -1,0 +1,54 @@
+The current position is 0.5 0.5 -138.80155206225882
+Obstacles: {'C2', 'B2', 'B1'}
+Navigating to mission
+Robot turned 132.3611990392918 degrees at 50 % power.
+Robot drove 0.8356969294790982 m at 50 % power for 10.151219734735491 seconds.
+The current position is 0.5032343606242232 1.3356906705546887 89.77825014153689
+Navigating to end
+Move to closest node A1
+Robot turned 74.31876740408333 degrees at 50 % power.
+Robot drove 0.578580160350452 m at 50 % power for 7.203898449760619 seconds.
+The current position is 1.0615320272104807 1.4875416416924951 15.215753929827422
+At node A1
+Robot turned 12.858429626383911 degrees at 50 % power.
+The current position is 1.0615320272104807 1.4875416416924951 3.3361376204848336
+Check path
+Object detected. Removed edge from A1 to B1 . Recursive call.
+At node A1
+Robot turned 88.3802356465862 degrees at 50 % power.
+The current position is 1.0615320272104807 1.4875416416924951 -86.21527499643908
+Robot drove 0.5123741384223095 m at 50 % power for 6.125645165639844 seconds.
+The current position is 1.0953527605154063 0.9762849393181193 -86.21527499643908
+At node A2
+Robot turned -89.7102218146775 degrees at 50 % power.
+The current position is 1.0953527605154063 0.9762849393181193 3.7402640374503666
+Check path
+Object detected. Removed edge from A2 to B2 . Recursive call.
+At node A2
+Robot turned 94.05091723841818 degrees at 50 % power.
+The current position is 1.0953527605154063 0.9762849393181193 -91.60167544823445
+Robot drove 0.4505632716963133 m at 50 % power for 5.4399354554793335 seconds.
+The current position is 1.0827591253523652 0.5258977035364355 -91.60167544823445
+At node A3
+Robot turned -90.50322480016162 degrees at 50 % power.
+The current position is 1.0827591253523652 0.5258977035364355 -0.3048600166667426
+Check path
+Robot drove 0.6746704857853998 m at 50 % power for 8.350526999190803 seconds.
+The current position is 1.7574200608520427 0.5223079262999965 -0.3048600166667426
+At node B3
+Robot turned 1.2517094114225709 degrees at 50 % power.
+The current position is 1.7574200608520427 0.5223079262999965 -2.240084864950831
+Check path
+Robot drove 0.8403296592977859 m at 50 % power for 10.064216308896764 seconds.
+The current position is 2.5971075530465266 0.4894620475985254 -2.240084864950831
+At node C3
+Robot turned -70.26179569472687 degrees at 50 % power.
+The current position is 2.5971075530465266 0.4894620475985254 68.66066409863018
+Robot drove 1.0828113113789894 m at 50 % power for 13.201608880642596 seconds.
+The current position is 2.991132615521627 1.4980375708945155 68.66066409863018
+At node D
+Robot turned 67.56526341323472 degrees at 50 % power.
+The current position is 2.991132615521627 1.4980375708945155 0.8645737675457308
+Robot drove 0.720018131169061 m at 50 % power for 8.394818365723367 seconds.
+The current position is 3.711068774972157 1.5089019865625515 0.8645737675457308
+Finished at node GOAL

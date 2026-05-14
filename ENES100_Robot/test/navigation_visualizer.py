@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import re
+import sys
 
 def visualize_log(log_filename):
     try:
@@ -15,6 +16,10 @@ def visualize_log(log_filename):
     
     path = [tuple(map(float, m)) for m in pos_pattern.findall(log_text)]
     removals = rem_pattern.findall(log_text)
+    
+    obs_set = re.search(r"Obstacles: \{(.*?)\}", log_text)
+    test_obs = [o.strip("' ") for o in obs_set.group(1).split(',')]
+    
 
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.set_xlim(0, 4.0); ax.set_ylim(0, 2.0); ax.set_aspect('equal')
@@ -38,6 +43,15 @@ def visualize_log(log_filename):
     for name, pos in nodes.items():
         ax.scatter(pos[0], pos[1], c='gray', s=10, alpha=0.3)
         ax.text(pos[0], pos[1]-0.08, name, fontsize=8, ha='center', color='gray')
+    
+    for obs in test_obs:
+        mid_x = nodes.get(obs)[0] - 0.4
+        mid_y = nodes.get(obs)[1]
+        
+        rect = patches.Rectangle((mid_x-0.1, mid_y-0.25), 0.2, 0.5, facecolor='white',
+                                 edgecolor='black', hatch='//', alpha=0.3, zorder=2)
+        ax.add_patch(rect)
+    
 
     if path:
         x, y = zip(*path)
@@ -56,14 +70,19 @@ def visualize_log(log_filename):
             ax.plot([u_p[0], v_p[0]], [u_p[1], v_p[1]], 'rx--', alpha=0.6)
             ax.text((u_p[0]+v_p[0])/2, (u_p[1]+v_p[1])/2 + 0.05, 'BLOCKED', color='red', fontsize=7, ha='center')
 
-    plt.title(f"Dynamic Navigation Trace: {log_filename}", pad=20)
+    plt.title(f"Navigation Trace: {log_filename}", pad=20)
     plt.xlabel("X (meters)"); plt.ylabel("Y (meters)")
     plt.grid(True, linestyle=':', alpha=0.3)
     plt.legend(loc='lower left', fontsize='small')
     plt.show()
 
 if __name__ == "__main__":
-    visualize_log('robot_output.txt')
+    if len(sys.argv) > 1:
+        target_file = sys.argv[1]
+    else:
+        target_file = 'robot_output.txt'
+        
+    visualize_log(target_file)
 
 
 

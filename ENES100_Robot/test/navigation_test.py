@@ -50,21 +50,39 @@ VELOCITY = 0.08373378 # IN m/s
 MOTOR_POWER = 50 # in percentage
 
 # Testing Values
-obj_ahead_to_node = {'B2', 'B3', 'C1'}
+row_b = ['B1', 'B2', 'B3']
+row_c = ['C1', 'C2', 'C3']
 
-global_x_pos, global_y_pos, global_theta_pos = 0.5, 1.5, 72/TO_DEGREE
+obj_ahead_to_node = set()
+
+if random.choice([True, False]):
+    # For 2 obstacles in first row
+    while len(obj_ahead_to_node) < 2:
+        obj_ahead_to_node.add(random.choice(row_b))
+    obj_ahead_to_node.add(random.choice(row_c))
+    
+else:
+    # For 2 obstacles in second row
+    while len(obj_ahead_to_node) < 2:
+        obj_ahead_to_node.add(random.choice(row_c))
+    obj_ahead_to_node.add(random.choice(row_b))
+
+
+global_x_pos = 0.5
+global_y_pos = random.choice([0.5, 1.5])
+global_theta_pos = random.uniform(-PI, PI)
 
 class Robot():
     def drive(self, power, time):
         global global_x_pos, global_y_pos
-        distance = VELOCITY * time
+        distance = VELOCITY * time + (random.random() - 0.5) * 0.05
         global_x_pos += math.cos(global_theta_pos) * distance
         global_y_pos += math.sin(global_theta_pos) * distance
         print("Robot drove", distance, "m at", power, "% power for", time, "seconds.")
     
     def turn(self, angle, power):
         global global_theta_pos
-        global_theta_pos -= angle/TO_DEGREE
+        global_theta_pos -= angle/TO_DEGREE + (random.random() - 0.5) * 0.05
         global_theta_pos = global_theta_pos - 2*PI if (global_theta_pos > PI) else global_theta_pos
         global_theta_pos = global_theta_pos + 2*PI if (global_theta_pos < -PI) else global_theta_pos
         print ("Robot turned", angle, "degrees at", power, "% power.")
